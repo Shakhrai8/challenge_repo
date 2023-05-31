@@ -29,14 +29,17 @@ RSpec.describe Application do
     end 
 
     it 'returns 200 OK and albums data' do
-      get '/albums'
+      response = get('/albums')
 
-      expect(last_response.status).to eq(200)
+      expect(response.status).to eq(200)
 
-      album_repo = AlbumRepository.new
-      expected_response = album_repo.all.to_json
-
-      expect(last_response.body).to eq(expected_response)
+      # album_repo = AlbumRepository.new
+      # expected_response = album_repo.all.to_json
+      # gsub replaces every \n with '', example:
+      # expect(response.body.gsub("\n", '')).to include('<div>        Title: Doolittle        Released: 1989      </div>')
+      # squeeze(' ') will collapse multiple consecutive spaces into a single space
+      response_body = response.body.gsub("\n", '').squeeze(' ')
+      expect(response_body).to include('<div> Title: Doolittle Released: 1989 </div>')
     end  
   end
 
@@ -64,11 +67,13 @@ RSpec.describe Application do
   end
 
   context "GET /albums/id" do
-      it "returns an album data" do
+    it "returns an album data" do
       response = get('/albums/1')
   
       expect(response.status).to eq(200)
       expect(response.body).to include('<h1>Doolittle</h1>')
     end
+
+
   end
 end

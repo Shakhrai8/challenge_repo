@@ -34,7 +34,7 @@ class Application < Sinatra::Base
   get '/albums' do
     album_repo = AlbumRepository.new
     result = album_repo.all
-    json result
+    erb :albums, locals: { result: result }
   end
 
   post '/artists' do
