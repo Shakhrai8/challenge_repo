@@ -31,6 +31,9 @@ class AlbumRepository
     sql = 'SELECT id, title, release_year, artist_id FROM albums WHERE id = $1;'
     result_set = DatabaseConnection.exec_params(sql, [id])
 
+    result_set.each do |record|
+      p record
+    end
     album = Album.new
     album.id = result_set[0]['id'].to_i
     album.title = result_set[0]['title']

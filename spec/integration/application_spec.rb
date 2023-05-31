@@ -7,6 +7,17 @@ RSpec.describe Application do
 
   let(:app) { Application }
 
+  def reset_albums_table
+    seed_sql = File.read('spec/seeds/albums_seeds.sql')
+    connection = PG.connect({ host: '127.0.0.1', dbname: 'music_library_1_test' })
+    connection.exec(seed_sql)
+  end
+  
+ 
+  before(:each) do 
+    reset_albums_table
+  end
+
   context "/albums" do
     it 'returns 200 OK with post method' do
       post '/albums', { title: 'Voyage', release_year: 2022, artist_id: 2 }
@@ -49,6 +60,15 @@ RSpec.describe Application do
       expected_response = artist_repo.all.to_json
 
       expect(last_response.body).to eq(expected_response)
+    end
+  end
+
+  context "GET /albums/id" do
+      it "returns an album data" do
+      response = get('/albums/1')
+  
+      expect(response.status).to eq(200)
+      expect(response.body).to include('<h1>Doolittle</h1>')
     end
   end
 end
