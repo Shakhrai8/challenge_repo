@@ -5,8 +5,10 @@
 
     <% result.each do |album| %>
       <div>
-        Title: <%= album.title %>
-        Released: <%= album.release_year %>
+        <a href="/albums/<%= album.id%>">
+          -- Title: <%= album.title %> --
+          Released: <%= album.release_year %>
+        </a>
       </div>
     <% end %>
 

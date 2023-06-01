@@ -54,7 +54,7 @@ class Application < Sinatra::Base
   get '/artists' do
     artist_repo = ArtistRepository.new
     result = artist_repo.all
-    result.to_json
+    erb :artists, locals: {result: result}
   end
 
   get '/albums/:id' do
@@ -66,5 +66,13 @@ class Application < Sinatra::Base
     
     return erb(:album)
 
+  end
+
+  get '/artists/:id' do
+    artist_repo = ArtistRepository.new
+
+    @artist = artist_repo.find(params[:id])
+    
+    return erb(:artist)
   end
 end

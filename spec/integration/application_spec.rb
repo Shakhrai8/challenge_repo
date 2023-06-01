@@ -39,7 +39,7 @@ RSpec.describe Application do
       # expect(response.body.gsub("\n", '')).to include('<div>        Title: Doolittle        Released: 1989      </div>')
       # squeeze(' ') will collapse multiple consecutive spaces into a single space
       response_body = response.body.gsub("\n", '').squeeze(' ')
-      expect(response_body).to include('<div> Title: Doolittle Released: 1989 </div>')
+      expect(response_body).to include('<a href="/albums/1"> -- Title: Doolittle -- Released: 1989 </a>')
     end  
   end
 
@@ -55,14 +55,12 @@ RSpec.describe Application do
     end
 
     it 'returns 200 OK and artists data' do
-      get '/artists'
+      response = get('/artists')
 
-      expect(last_response.status).to eq(200)
+      expect(response.status).to eq(200)
 
-      artist_repo = ArtistRepository.new
-      expected_response = artist_repo.all.to_json
-
-      expect(last_response.body).to eq(expected_response)
+      response_body = response.body.gsub("\n", '').squeeze(' ')
+      expect(response_body).to include('<a href="/artists/1"> -- Name: Pixies -- Genre: Rock </a>')
     end
   end
 
@@ -73,7 +71,14 @@ RSpec.describe Application do
       expect(response.status).to eq(200)
       expect(response.body).to include('<h1>Doolittle</h1>')
     end
+  end
 
-
+  context "GET /artists/id" do
+    it "returns an album data" do
+      response = get('/artists/1')
+  
+      expect(response.status).to eq(200)
+      expect(response.body).to include('<h1>Pixies</h1>')
+    end
   end
 end
