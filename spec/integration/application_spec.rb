@@ -81,4 +81,40 @@ RSpec.describe Application do
       expect(response.body).to include('<h1>Pixies</h1>')
     end
   end
+
+  context "GET /albums/new" do
+    it 'returns the form page' do
+      response = get('/albums/new')
+  
+      expect(response.status).to eq(200)
+      expect(response.body).to include('<h1>Add a New Album</h1>')
+  
+      # Assert we have the correct form tag with the action and method.
+      expect(response.body).to include('<form action="/albums" method="post">')
+  
+      # We can assert more things, like having
+      # the right HTML form inputs, etc.
+    end
+  end
+  
+  context "POST /albums" do
+    it 'returns a success page' do
+      # We're now sending a POST request,
+      # simulating the behaviour that the HTML form would have.
+      response = post '/albums', { title: 'Im Title', release_year: 2000, artist_id: 1 }
+  
+      expect(response.status).to eq(200)
+      expect(response.body).to include('<p>The album has been successfully created.</p>')
+    end
+  
+    it 'responds with 400 status if parameters are invalid' do
+      post '/albums', {
+        title: '',
+        release_year: '1990',
+        artist_id: '1'
+      }
+    
+      expect(last_response.status).to eq(400)
+    end
+  end
 end
