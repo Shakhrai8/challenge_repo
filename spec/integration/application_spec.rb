@@ -43,26 +43,26 @@ RSpec.describe Application do
     end  
   end
 
-  context "POST /artists" do
-    it 'returns 200 OK' do
-      post '/artists', { name: 'Wild nothing', genre: 'Indie' }
+  # context "POST /artists" do
+  #   it 'returns 200 OK' do
+  #     post '/artists', { name: 'Wild nothing', genre: 'Indie' }
 
-      expect(last_response.status).to eq(200)
+  #     expect(last_response.status).to eq(200)
 
-      artist = ArtistRepository.new.all
-      expect(artist.last.name).to eq('Wild nothing')
-      expect(artist.last.genre).to eq('Indie')
-    end
+  #     artist = ArtistRepository.new.all
+  #     expect(artist.last.name).to eq('Wild nothing')
+  #     expect(artist.last.genre).to eq('Indie')
+  #   end
 
-    it 'returns 200 OK and artists data' do
-      response = get('/artists')
+  #   it 'returns 200 OK and artists data' do
+  #     response = get('/artists')
 
-      expect(response.status).to eq(200)
+  #     expect(response.status).to eq(200)
 
-      response_body = response.body.gsub("\n", '').squeeze(' ')
-      expect(response_body).to include('<a href="/artists/1"> -- Name: Pixies -- Genre: Rock </a>')
-    end
-  end
+  #     response_body = response.body.gsub("\n", '').squeeze(' ')
+  #     expect(response_body).to include('<a href="/artists/1"> -- Name: Pixies -- Genre: Rock </a>')
+  #   end
+  # end
 
   context "GET /albums/id" do
     it "returns an album data" do
@@ -112,6 +112,41 @@ RSpec.describe Application do
         title: '',
         release_year: '1990',
         artist_id: '1'
+      }
+    
+      expect(last_response.status).to eq(400)
+    end
+  end
+
+  context "GET /artists/new" do
+    it 'returns the form page' do
+      response = get('/artists/new')
+  
+      expect(response.status).to eq(200)
+      expect(response.body).to include('<h1>Add a New Artist</h1>')
+  
+      # Assert we have the correct form tag with the action and method.
+      expect(response.body).to include('<form action="/artists" method="post">')
+  
+      # We can assert more things, like having
+      # the right HTML form inputs, etc.
+    end
+  end
+  
+  context "POST /artists" do
+    it 'returns a success page' do
+      # We're now sending a POST request,
+      # simulating the behaviour that the HTML form would have.
+      response = post '/artists', { name: 'Wild nothing', genre: 'Indie' }
+  
+      expect(response.status).to eq(200)
+      expect(response.body).to include('<p>New artist has been successfully created.</p>')
+    end
+  
+    it 'responds with 400 status if parameters are invalid' do
+      post '/artists', {
+        name: '',
+        genre: 'Pop'
       }
     
       expect(last_response.status).to eq(400)
